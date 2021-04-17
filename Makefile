@@ -10,15 +10,16 @@ venv:
 
 .PHONY: pipcompile
 pipcompile:
-	python3 -m piptools compile
+	python3 -m piptools compile requirements.in
+	python3 -m piptools compile dev-requirements.in
 
 .PHONY: lint
 lint:
-	.venv/bin/flake8 *.py
+	.venv/bin/flake8 recrawler/*.py
 
 .PHONY: typecheck
 typecheck:
-	.venv/bin/mypy *.py
+	.venv/bin/mypy recrawler/*.py
 
 # .PHONY: unit
 # unit:
@@ -29,9 +30,16 @@ test: lint typecheck
 
 .PHONY: package
 package:
-	rm -rf .build
-	mkdir -p .build/recrawler
-	python3 -m pip install -t .build/recrawler -r requirements.txt
-	cp -r recrawler .build/recrawler/recrawler
-	echo '#!/bin/bash\nset -eux\npython3 -m recrawler.main $$@\n' > .build/recrawler/main.sh
-	chmod +x .build/recrawler/main.sh
+	./scripts/package.sh
+
+.PHONY: docker-build
+docker-build:
+	cd docker && docker build -t recrawler-build .
+
+.PHONY: docker-package
+docker-package: docker-build
+	docker run -it -v ${PWD}:/project -w /project recrawler-build /bin/bash ./scripts/package.sh
+
+.PHONY: ecweb
+ecweb:
+	.venv/bin/python3 -m recrawler.main ../ecweb/recrawler.yaml

@@ -1,10 +1,5 @@
-# Dev reqs
-flake8
-mypy
-# pytest
-
-# App reqs
+lxml
 marshmallow
-marshmallow-dataclass
+marshmallow-dataclass[enum,union]
 PyYAML
 requests
