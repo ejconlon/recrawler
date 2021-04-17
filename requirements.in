@@ -1,0 +1,10 @@
+# Dev reqs
+flake8
+mypy
+# pytest
+
+# App reqs
+marshmallow
+marshmallow-dataclass
+PyYAML
+requests
