@@ -184,7 +184,15 @@ def run(fname: str) -> None:
 
 def handler() -> None:
     fname = os.environ['RECRAWLER_CONFIG']
-    run(fname)
+    topic_arn = os.environ.get('RECRAWLER_TOPIC_ARN')
+    try:
+        run(fname)
+    except Exception as err:
+        if topic_arn is not None:
+            message = str(err)
+            sns = boto3.client('sns')
+            sns.publish(TopicArn=topic_arn, Message=message)
+        raise
 
 
 def main() -> None:
