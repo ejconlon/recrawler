@@ -1,5 +1,7 @@
+boto3
 lxml
 marshmallow
 marshmallow-dataclass[enum,union]
 PyYAML
+ratelimiter
 requests
