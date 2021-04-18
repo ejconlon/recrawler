@@ -7,7 +7,7 @@ from urllib.robotparser import RobotFileParser
 import boto3
 import lxml.etree
 import marshmallow_dataclass
-import os.path
+import os
 import requests
 import sys
 import urllib.parse
@@ -165,10 +165,7 @@ def recrawl(site: Site) -> None:
     print('Finished site', site.base_url)
 
 
-def main() -> None:
-    assert len(sys.argv) == 2
-    fname = sys.argv[1]
-    contents: str
+def run(fname: str) -> None:
     if fname.startswith('s3://'):
         parsed = urllib.parse.urlparse(fname)
         bucket = parsed.netloc
@@ -183,6 +180,17 @@ def main() -> None:
     sites = [SiteSchema.load(r) for r in raw_sites]
     for site in sites:
         recrawl(site)
+
+
+def handler() -> None:
+    fname = os.environ['RECRAWLER_CONFIG']
+    run(fname)
+
+
+def main() -> None:
+    assert len(sys.argv) == 2
+    fname = sys.argv[1]
+    run(fname)
 
 
 if __name__ == '__main__':
