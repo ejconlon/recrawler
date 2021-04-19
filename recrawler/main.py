@@ -10,6 +10,7 @@ import marshmallow_dataclass
 import os
 import requests
 import sys
+import traceback
 import urllib.parse
 import yaml
 
@@ -184,21 +185,27 @@ def run(fname: str) -> None:
 
 def handler() -> None:
     fname = os.environ['RECRAWLER_CONFIG']
-    topic_arn = os.environ.get('RECRAWLER_TOPIC_ARN')
+    topic_arn = os.environ.get('ALERT_TOPIC_ARN')
     try:
         run(fname)
-    except Exception as err:
+    except Exception:
         if topic_arn is not None:
-            message = str(err)
+            message = traceback.format_exc()
             sns = boto3.client('sns')
-            sns.publish(TopicArn=topic_arn, Message=message)
+            sns.publish(
+                TopicArn=topic_arn,
+                Subject='Recrawler FAILED',
+                Message=message
+            )
         raise
 
 
 def main() -> None:
-    assert len(sys.argv) == 2
-    fname = sys.argv[1]
-    run(fname)
+    assert len(sys.argv) <= 2
+    if len(sys.argv) == 2:
+        fname = sys.argv[1]
+        os.environ['RECRAWLER_CONFIG'] = fname
+    handler()
 
 
 if __name__ == '__main__':
