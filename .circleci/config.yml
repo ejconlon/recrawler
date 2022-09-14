@@ -1,19 +1,36 @@
-version: '2.1'
-orbs:
-  python: circleci/python@2.1.0
+version: 2.1
+
+parameters:
+  cachever:
+    type: string
+    default: "v1"
+
+executors:
+  python:
+    docker:
+      - image: python:3.9
+
 jobs:
   build:
-    executor: python/default
+    executor: python
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - python/install-packages:
-          pip-dependency-file: dev-requirements.txt
-          pkg-manager: pip
+      - restore_cache:
+          name: Restore venv
+          keys:
+            - << pipeline.parameters.cachever >>-venv-{{ checksum "requirements.txt" }}-{{ checksum "dev-requirements.txt" }}
       - run:
-          command: make test
+          name: Install
+          command: make venv
+      - save_cache:
+          name: Save venv
+          key: << pipeline.parameters.cachever >>-venv-{{ checksum "requirements.txt" }}-{{ checksum "dev-requirements.txt" }}
+          paths:
+            - /root/project/.venv
+      - run:
           name: Test
+          command: make test
+
 workflows:
   main:
     jobs:
