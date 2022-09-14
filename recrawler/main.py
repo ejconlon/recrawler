@@ -57,9 +57,10 @@ class Crawler:
             # TODO(ejconlon) Update to py3.8 and use this
             # sitemaps = robot_parser.site_maps()
             # if site.sitemap is None:
-            #     assert len(sitemaps) == 0, 'should have no sitemap'
+            #     assert sitemaps is None, 'should have no sitemap'
             # else:
-            #     assert sitemaps == [site.sitemap], 'should have sitemap'
+            #     expected_sitemap = urllib.parse.urljoin(site.base_url, site.sitemap)
+            #     assert sitemaps == [expected_sitemap], 'should have sitemap'
         return cls(
             base_url=site.base_url,
             robot_policy=site.robot_policy,
