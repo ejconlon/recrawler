@@ -1,6 +1,6 @@
 # recrawler
 
-A dead-link detector
+A dead-link detector for any website
 
 ## Example
 
