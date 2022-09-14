@@ -1,0 +1,12 @@
+---
+base_url: https://ericconlon.com
+robot_policy: allow
+sitemap: sitemap.xml
+atom: atom.xml
+pages:
+- path: index.html
+---
+base_url: https://files.ericconlon.com
+robot_policy: deny
+pages:
+- path: index.html
