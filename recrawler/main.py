@@ -54,13 +54,12 @@ class Crawler:
             robot_parser = RobotFileParser(robot_url)
             with rate_limiter:
                 robot_parser.read()
-            # TODO(ejconlon) Update to py3.8 and use this
-            # sitemaps = robot_parser.site_maps()
-            # if site.sitemap is None:
-            #     assert sitemaps is None, 'should have no sitemap'
-            # else:
-            #     expected_sitemap = urllib.parse.urljoin(site.base_url, site.sitemap)
-            #     assert sitemaps == [expected_sitemap], 'should have sitemap'
+            sitemaps = robot_parser.site_maps()
+            if site.sitemap is None:
+                assert sitemaps is None, 'should have no sitemap'
+            else:
+                expected_sitemap = urllib.parse.urljoin(site.base_url, site.sitemap)
+                assert sitemaps == [expected_sitemap], 'should have sitemap'
         return cls(
             base_url=site.base_url,
             robot_policy=site.robot_policy,
